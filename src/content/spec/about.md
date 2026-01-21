@@ -1,8 +1,3 @@
----
-title: 关于我
-description: 空岚的个人简介
-layout: ../layouts/AboutLayout.astro
----
 
 # 👋 你好，我是空岚
 
