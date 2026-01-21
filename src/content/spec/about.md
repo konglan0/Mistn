@@ -1,49 +1,56 @@
+---
+title: 关于我
+description: 空岚的个人简介
+layout: ../layouts/AboutLayout.astro
+---
 
-This website is built with the **Astro** framework using the [Mizuki](https://github.com/matsuzaka-yuki/mizuki) theme.
+# 👋 你好，我是空岚
+
+> [!NOTE] 
+> 欢迎来到我的数字小窝！这里记录着我的热爱点滴。
+
+## 🧑‍🎓 教育经历
+
+- **硕士研究生** (在读) | [安徽理工大学](https://www.aust.edu.cn/)
+  - 专业：数学
+  - 研究方向：**多模态智能体 (Multimodal Agents)**
+- **本科** | [湖北师范大学](https://www.hbnu.edu.cn/)
+  - 专业：数学与应用数学
+
+## 📍 坐标
+
+- 🏠 **故乡**：安徽 · 金寨
+- 📜 **身份**：中华诗词学会会员
+- 🔭 **目前状态**：学习Agentic AI基础理论
+
+## 💡 兴趣爱好
+
+### 📺 二次元
+重度动漫爱好者。我相信二次元不仅是娱乐，更是一种对美好世界的向往。
+*（你可以在本站的 [Anime](/anime) 页面查看我的追番进度）*
+
+### ✒️ 诗词创作
+
+> **《无题·偶得》** (示例占位)
+> 
+> *此处可以填入你的一首得意之作*
+> *或者留空，后续补充*
+
+### 💻 折腾电脑
+热衷于各类技术折腾，从配置环境到优化系统，乐此不疲。
+
+## 🛠️ 技术栈与项目
+
+虽然主修数学，但我对编程充满热情。
 
 ::github{repo="matsuzaka-yuki/Mizuki"}
 
-## 🌟 Theme Features
-
-### 🎨 Design & User Experience
-- **Modern & Elegant Design** - Clean, minimalist interface with beautiful typography
-- **Fully Responsive** - Optimized for all devices from mobile to desktop
-- **Dark/Light Mode** - Automatic theme switching with smooth transitions
-- **Beautiful Typography** - Enhanced readability with JetBrains Mono font
-- **Smooth Animations** - Fluid page transitions and interactive elements
-
-### 🔍 Content & Search
-- **Advanced Search** - Powered by [Pagefind](https://pagefind.app/) for fast, accurate results
-- **Enhanced Markdown** - Extended syntax with code highlighting and math support
-- **Interactive Table of Contents** - Auto-scroll navigation for long articles
-- **RSS Feed Generation** - Stay updated with automatic feed generation
-- **Reading Time Estimation** - Know how long articles take to read
-- **Post Categorization** - Organize content with tags and categories
-
-
-
-### 📱 Special Pages
-- **Anime Tracking Page** - Track your anime watching progress with ratings
-- **Friends Links Page** - Showcase friend websites with beautiful cards
-- **Diary/Moments Page** - Share life moments like social media posts
-- **Archive Page** - Organized timeline view of all posts
-- **About Page** - Customizable personal introduction (this page!)
-
-### 🛠 Technical Features
-- **Enhanced Code Blocks** - Powered by [Expressive Code](https://expressive-code.com/)
-- **Math Support** - LaTeX rendering with KaTeX for mathematical expressions
-- **Image Optimization** - PhotoSwipe gallery with lazy loading
-- **SEO Optimized** - Built-in sitemap and meta tags for better search visibility
-- **Performance Optimized** - Fast loading with caching and optimization
-- **Comment System Ready** - Integration support for Twikoo comments
-
-### 🎯 Advanced Markdown Features
-- **Callouts & Admonitions** - Beautiful info boxes with `> [!NOTE]`, `> [!TIP]`, `> [!WARNING]`
-- **Mathematical Equations** - Write LaTeX math with `$inline$` and `$$block$$` syntax
-- **GitHub Cards** - Embed repository cards with `::github{repo="user/repo"}`
-- **Syntax Highlighting** - Advanced code highlighting with line numbers
-- **Copy Code Buttons** - Easy code copying functionality
+> [!TIP]
+> 上面是我目前使用的博客主题，我也在学习如何更好地魔改它！
 
 ---
 
-*Built with ❤️ using Astro and inspired by modern web design principles.*
+## 📬 联系我
+
+
+
