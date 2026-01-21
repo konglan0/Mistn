@@ -106,20 +106,18 @@ export const siteConfig: SiteConfig = {
 		// 支持单张图片或图片数组，当数组长度 > 1 时自动启用轮播
 		src: {
 			desktop: [
-				"/assets/desktop-banner/1.webp",
-				"/assets/desktop-banner/2.webp",
-				"/assets/desktop-banner/3.webp",
-				"/assets/desktop-banner/4.webp",
-				"/assets/desktop-banner/5.webp",
-				"/assets/desktop-banner/6.webp",
+				"assets/desktop-banner/1.jpeg",
+				"assets/desktop-banner/1.png",
+				"assets/desktop-banner/2.jpeg",
+				"assets/desktop-banner/3.jpeg",
+				"assets/desktop-banner/4.jpeg",
+				"assets/desktop-banner/5.jpg",
+				"assets/desktop-banner/6.jpeg",
+				"assets/desktop-banner/7.jpeg",
 			], // 桌面横幅图片
 			mobile: [
-				"/assets/mobile-banner/1.webp",
-				"/assets/mobile-banner/2.webp",
-				"/assets/mobile-banner/3.webp",
-				"/assets/mobile-banner/4.webp",
-				"/assets/mobile-banner/5.webp",
-				"/assets/mobile-banner/6.webp",
+				"assets/mobile-banner/1.jpeg",
+				"assets/mobile-banner/1.png",
 			], // 移动横幅图片
 		}, // 使用本地横幅图片
 
@@ -147,14 +145,10 @@ export const siteConfig: SiteConfig = {
 
 		homeText: {
 			enable: true, // 在主页显示自定义文本
-			title: "わたしの部屋", // 主页横幅主标题
+			title: "遠い空へ", // 主页横幅主标题
 
 			subtitle: [
-				"特別なことはないけど、君がいると十分です",
-				"今でもあなたは私の光",
-				"君ってさ、知らないうちに私の毎日になってたよ",
-				"君と話すと、なんか毎日がちょっと楽しくなるんだ",
-				"今日はなんでもない日。でも、ちょっとだけいい日",
+				"いつまでも一緒にいよう",
 			],
 			typewriter: {
 				enable: true, // 启用副标题打字机效果
@@ -218,18 +212,18 @@ export const siteConfig: SiteConfig = {
 export const fullscreenWallpaperConfig: FullscreenWallpaperConfig = {
 	src: {
 		desktop: [
-			"/assets/desktop-banner/1.jpeg",
-			"/assets/desktop-banner/1.png",
-			"/assets/desktop-banner/2.jpeg",
-			"/assets/desktop-banner/3.jpeg",
-			"/assets/desktop-banner/4.jpeg",
-			"/assets/desktop-banner/5.jpg",
-			"/assets/desktop-banner/6.jpeg",
-			"/assets/desktop-banner/7.jpeg",
+			"assets/desktop-banner/1.jpeg",
+			"assets/desktop-banner/1.png",
+			"assets/desktop-banner/2.jpeg",
+			"assets/desktop-banner/3.jpeg",
+			"assets/desktop-banner/4.jpeg",
+			"assets/desktop-banner/5.jpg",
+			"assets/desktop-banner/6.jpeg",
+			"assets/desktop-banner/7.jpeg",
 		], // 桌面横幅图片
 		mobile: [
-			"/assets/mobile-banner/1.jpeg",
-			"/assets/mobile-banner/1.png",
+			"assets/mobile-banner/1.jpeg",
+			"assets/mobile-banner/1.png",
 		], // 移动横幅图片
 	}, // 使用本地横幅图片
 	position: "center", // 壁纸位置，等同于 object-position
@@ -354,27 +348,12 @@ export const profileConfig: ProfileConfig = {
 		{
 			name: "Bilibili",
 			icon: "fa6-brands:bilibili",
-			url: "https://space.bilibili.com/701864046",
-		},
-		{
-			name: "Gitee",
-			icon: "mdi:git",
-			url: "https://gitee.com/matsuzakayuki",
+			url: "https://space.bilibili.com/288171693",
 		},
 		{
 			name: "GitHub",
 			icon: "fa6-brands:github",
-			url: "https://github.com/matsuzaka-yuki",
-		},
-		{
-			name: "Codeberg",
-			icon: "simple-icons:codeberg",
-			url: "https://codeberg.org",
-		},
-		{
-			name: "Discord",
-			icon: "fa6-brands:discord",
-			url: "https://discord.gg/MqW6TcQtVM",
+			url: "https://github.com/konglan0",
 		},
 	],
 };
@@ -433,7 +412,7 @@ export const shareConfig: ShareConfig = {
 
 export const announcementConfig: AnnouncementConfig = {
 	title: "", // 公告标题，填空使用i18n字符串Key.announcement
-	content: "ブログへようこそ！これはサンプルの告知です", // 公告内容
+	content: "无", // 公告内容
 	closable: true, // 允许用户关闭公告
 	link: {
 		enable: true, // 启用链接
@@ -616,7 +595,7 @@ export const sidebarLayoutConfig: SidebarLayoutConfig = {
 };
 
 export const sakuraConfig: SakuraConfig = {
-	enable: false, // 默认关闭樱花特效
+	enable: true, // 默认关闭樱花特效
 	sakuraNum: 21, // 樱花数量
 	limitTimes: -1, // 樱花越界限制次数，-1为无限循环
 	size: {
