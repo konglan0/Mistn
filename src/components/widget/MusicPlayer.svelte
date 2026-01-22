@@ -380,17 +380,6 @@ function handleLoadSuccess() {
     }
 }
 
-function handleUserInteraction() {
-    if (autoplayFailed && audio) {
-        const playPromise = audio.play();
-		if (playPromise !== undefined) {
-            playPromise.then(() => {
-                autoplayFailed = false;
-            }).catch(() => {});
-		}
-    }
-}
-
 function handleLoadError(_event: Event) {
 	if (!currentSong.url) return;
 	isLoading = false;
