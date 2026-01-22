@@ -100,3 +100,4 @@ const localAnimeList: AnimeItem[] = [
 ];
 
 export default localAnimeList;
+
