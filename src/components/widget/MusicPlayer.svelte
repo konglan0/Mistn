@@ -505,36 +505,67 @@ function formatTime(seconds: number): string {
 	const secs = Math.floor(seconds % 60);
 	return `${mins}:${secs.toString().padStart(2, "0")}`;
 }
+// ... (保留上面的所有代码，直到 const interactionEvents 这一行之前) ...
 
-const interactionEvents = ['click', 'keydown', 'touchstart'];
+// 1. 定义交互处理函数：用户一点页面就播放
+const handleUserInteraction = () => {
+    // 只有当音频暂停且有歌单时才尝试播放
+    if (audio && audio.paused && playlist.length > 0) {
+        audio.play().then(() => {
+            isPlaying = true; // 更新播放状态图标
+            // 播放成功后，移除监听器，不再打扰用户
+            document.removeEventListener('click', handleUserInteraction);
+            document.removeEventListener('keydown', handleUserInteraction);
+            document.removeEventListener('scroll', handleUserInteraction);
+        }).catch(e => {
+            // 如果还是失败（极少见），就在后台静默失败
+            console.debug("等待用户交互以播放音乐");
+        });
+    }
+};
+
 onMount(() => {
-    interactionEvents.forEach(event => {
-        document.addEventListener(event, handleUserInteraction, { capture: true });
-    });
+    if (!musicPlayerConfig.enable) {
+        return;
+    }
 
-	if (!musicPlayerConfig.enable) {
-		return;
-	}
-    // 设置自动播放意图
-    willAutoPlay = true;  // ← 添加这行
-	if (mode === "meting") {
-		fetchMetingPlaylist();
-	} else {
-		// 使用本地播放列表，不发送任何API请求
-		playlist = [...localPlaylist];
-		if (playlist.length > 0) {
-			loadSong(playlist[0]);
-		} else {
-			showErrorMessage("本地播放列表为空");
-		}
-	}
+    // 2. 初始化歌单
+    if (mode === "meting") {
+        fetchMetingPlaylist();
+    } else {
+        playlist = [...localPlaylist];
+        if (playlist.length > 0) {
+            // 加载第一首歌，但不立即调用 audio.play()，避免报错
+            loadSong(playlist[0]);
+            // 标记意图：我们想播放
+            willAutoPlay = true; 
+        } else {
+            showErrorMessage("本地播放列表为空");
+        }
+    }
+
+    // 3. 尝试一次静默自动播放（部分浏览器可能允许）
+    setTimeout(() => {
+         if(audio && playlist.length > 0) {
+             audio.play().catch(() => {
+                 // 预期的失败，忽略它
+             });
+         }
+    }, 1000);
+
+    // 4. 【核心】添加全局交互监听
+    // 只要用户点一下、按一下键或滚动一下，就立刻播放
+    document.addEventListener('click', handleUserInteraction);
+    document.addEventListener('keydown', handleUserInteraction);
+    document.addEventListener('scroll', handleUserInteraction); 
 });
 
 onDestroy(() => {
     if (typeof document !== 'undefined') {
-        interactionEvents.forEach(event => {
-            document.removeEventListener(event, handleUserInteraction, { capture: true });
-        });
+        // 组件销毁时清理监听器
+        document.removeEventListener('click', handleUserInteraction);
+        document.removeEventListener('keydown', handleUserInteraction);
+        document.removeEventListener('scroll', handleUserInteraction);
     }
 });
 </script>
