@@ -222,7 +222,7 @@ const localPlaylist = [
 		title: "花火が瞬く夜に",
 		artist: "羽肿",
 		cover: "assets/music/cover/huahuo.jpg",
-		url: "assets/music/url/四花火が瞬く夜に.mp3",
+		url: "assets/music/url/花火が瞬く夜に.mp3",
 		duration: 277,
 	},
 ];
