@@ -20,7 +20,7 @@ licenseName: "CC BY-NC-ND 4.0"
 <hr style="border: 0; border-top: 1px dashed #483D8B; opacity: 0.3; width: 60%; margin: 15px auto 30px auto;">
 <!-- 正文 -->
     <div style="font-size: 17px; font-weight: bold; letter-spacing: 2px; color: #1a1a1a;">
-        <div style="line-height: 1.8; text-indent: 2em; text-align: left;">
+        <div style="line-height: 1.8; text-align: center;">
             花见春樱舞轻雨，云屏碧扇半遮出。<br>
             山茶剑艺五才蓄，诗腹琴棋万卷书。<br>
             雪鹤躬眉绰约处，芙蓉沁水巧玲珠。<br>
