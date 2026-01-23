@@ -5,7 +5,7 @@ tags: [宋词]
 category: 古典诗词
 image: "./cover.png"
 draft: false
-description: “美人赠我金错刀，何以报之青玉案”
+description: 「美人赠我金错刀，何以报之青玉案」
 licenseName: "CC BY-NC-ND 4.0"
 ---
 
