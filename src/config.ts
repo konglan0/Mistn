@@ -118,6 +118,7 @@ export const siteConfig: SiteConfig = {
 			mobile: [
 				"assets/mobile-banner/1.jpeg",
 				"assets/mobile-banner/1.png",
+				"assets/mobile-banner/2.jpg",
 			], // 移动横幅图片
 		}, // 使用本地横幅图片
 
@@ -224,6 +225,7 @@ export const fullscreenWallpaperConfig: FullscreenWallpaperConfig = {
 		mobile: [
 			"assets/mobile-banner/1.jpeg",
 			"assets/mobile-banner/1.png",
+			"assets/mobile-banner/2.jpg",
 		], // 移动横幅图片
 	}, // 使用本地横幅图片
 	position: "center", // 壁纸位置，等同于 object-position
@@ -589,7 +591,7 @@ export const sidebarLayoutConfig: SidebarLayoutConfig = {
 };
 
 export const sakuraConfig: SakuraConfig = {
-	enable: true, // 默认关闭樱花特效
+	enable:true, // 默认关闭樱花特效
 	sakuraNum: 21, // 樱花数量
 	limitTimes: -1, // 樱花越界限制次数，-1为无限循环
 	size: {
