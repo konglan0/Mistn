@@ -1,5 +1,5 @@
 ---
-title:青玉案
+title: 青玉案
 published: 2025-05-03
 tags: [宋词]
 category: 古典诗词
