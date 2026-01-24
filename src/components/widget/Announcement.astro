@@ -15,21 +15,22 @@ const className = Astro.props.class;
 const style = Astro.props.style;
 ---
 
-<!-- 组件显示现在由sidebarLayoutConfig统一控制，无需检查config.enable -->
+<!-- 修改点 1: 在 class:list 中添加 "!p-0" 以强制移除默认内边距 -->
 <WidgetLayout 
-    name={config.title || i18n(I18nKey.announcement)} 
     id="announcement"
-    class={className} 
+    class:list={[className, "!p-0"]} 
     style={style}
 >
-    <div>
-        <!-- 公告栏内容 -->
-        <div class="text-neutral-600 dark:text-neutral-300 leading-relaxed mb-3">
+    <!-- 修改点 2: 添加 flex 布局让内部元素垂直居中，并添加 py-2 稍微留点上下空隙以免字贴着边太难看(如果完全不要空隙可去掉 py-2) -->
+    <div class="flex flex-col items-center justify-center w-full py-2">
+        
+        <!-- 修改点 3: 添加 text-center 让文字居中，添加 px-2 防止文字太长贴到左右边缘 -->
+        <div class="text-neutral-600 dark:text-neutral-300 leading-relaxed mb-2 text-center px-2 font-semibold">
             {config.content}
         </div>
         
-        <!-- 可选链接和关闭按钮 -->
-        <div class="flex items-center justify-between gap-3">
+        <!-- 修改点 4: 将 justify-between 改为 justify-center，让按钮也居中 -->
+        <div class="flex items-center justify-center gap-3 w-full">
             <div>
                 {config.link && config.link.enable !== false && (
                     <a 
@@ -59,17 +60,13 @@ const style = Astro.props.style;
 
 <script>
     function closeAnnouncement() {
-        // 通过data-id属性找到整个widget-layout元素
         const widgetLayout = document.querySelector('widget-layout[data-id="announcement"]') as HTMLElement;
         if (widgetLayout) {
-            // 隐藏整个widget-layout元素
             widgetLayout.style.display = 'none';
-            // 保存关闭状态到localStorage
             localStorage.setItem('announcementClosed', 'true');
         }
     }
 
-    // 页面加载时检查是否已关闭
     document.addEventListener('DOMContentLoaded', function() {
         const widgetLayout = document.querySelector('widget-layout[data-id="announcement"]') as HTMLElement;
         if (widgetLayout && localStorage.getItem('announcementClosed') === 'true') {
@@ -77,6 +74,5 @@ const style = Astro.props.style;
         }
     });
 
-    // 使公告栏函数全局可用
     window.closeAnnouncement = closeAnnouncement;
 </script>

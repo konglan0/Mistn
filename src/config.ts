@@ -382,14 +382,8 @@ export const shareConfig: ShareConfig = {
 
 export const announcementConfig: AnnouncementConfig = {
 	title: "", // 公告标题，填空使用i18n字符串Key.announcement
-	content: "无", // 公告内容
-	closable: true, // 允许用户关闭公告
-	link: {
-		enable: true, // 启用链接
-		text: "Learn More", // 链接文本
-		url: "/about/", // 链接 URL
-		external: false, // 内部链接
-	},
+	content: "ACG/巨蟹/ENFJ/物哀/花间词派", // 公告内容
+	closable: false, // 允许用户关闭公告
 };
 
 export const musicPlayerConfig: MusicPlayerConfig = {
