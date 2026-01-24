@@ -244,34 +244,15 @@ export const navBarConfig: NavBarConfig = {
 		LinkPreset.Archive,
 		// 支持自定义导航栏链接，支持多级菜单
 		{
-			name: "Links",
-			url: "/links/",
-			icon: "material-symbols:link",
-			children: [
-				{
-					name: "GitHub",
-					url: "https://github.com/konglan0",
-					external: true,
-					icon: "fa6-brands:github",
-				},
-				{
-					name: "Bilibili",
-					url: "https://space.bilibili.com/288171693",
-					external: true,
-					icon: "fa6-brands:bilibili",
-				},
-			],
+			name: "Anime",
+			url: "/anime/",
+			icon: "material-symbols:movie",
 		},
 		{
 			name: "My",
 			url: "/content/",
 			icon: "material-symbols:person",
 			children: [
-				{
-					name: "Anime",
-					url: "/anime/",
-					icon: "material-symbols:movie",
-				},
 				{
 					name: "Diary",
 					url: "/diary/",
@@ -291,21 +272,9 @@ export const navBarConfig: NavBarConfig = {
 			],
 		},
 		{
-			name: "About",
-			url: "/content/",
-			icon: "material-symbols:info",
-			children: [
-				{
-					name: "About",
-					url: "/about/",
-					icon: "material-symbols:person",
-				},
-				{
-					name: "Friends",
-					url: "/friends/",
-					icon: "material-symbols:group",
-				},
-			],
+			name: "Friends",
+			url: "/friends/",
+			icon: "material-symbols:group",
 		},
 		{
 			name: "Others",
@@ -599,8 +568,8 @@ export const sakuraConfig: SakuraConfig = {
 		max: 1.1, // 樱花最大尺寸倍数
 	},
 	opacity: {
-		min: 0.3, // 樱花最小不透明度
-		max: 0.9, // 樱花最大不透明度
+		min: 0.2, // 樱花最小不透明度
+		max: 0.8, // 樱花最大不透明度
 	},
 	speed: {
 		horizontal: {

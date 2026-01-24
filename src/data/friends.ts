@@ -34,7 +34,15 @@ export const friendsData: FriendItem[] = [
 		imgurl: "https://0x3a0.vercel.app/assets/images/avatar.jpg",
 		desc: "老朋友",
 		siteurl: "https://0x3a0.vercel.app/",
-		tags: ["blog"],
+		tags: ["Blog"],
+	},
+	{
+		id: 4,
+		title: "Syurlow",
+		imgurl: "https://syurlow.github.io/my-blog/assets/images/01.jpg",
+		desc: "老朋友",
+		siteurl: "https://syurlow.github.io/my-blog/",
+		tags: ["Blog"],
 	},
 ];
 
