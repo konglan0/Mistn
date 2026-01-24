@@ -320,6 +320,16 @@ export const profileConfig: ProfileConfig = {
 			icon: "fa6-brands:github",
 			url: "https://github.com/konglan0",
 		},
+		{
+			name: "Steam",
+			icon: "fa6-brands:steam",
+			url: "https://steamcommunity.com/profiles/76561199209389776/",
+		},
+		{
+			name: "QQ",
+			icon: "fa6-brands:qq",
+			url: "tencent://AddContact/?fromId=45&fromSubId=1&subcmd=all&uin=2353783206&website=www.oicqzone.com",
+		},
 	],
 };
 
