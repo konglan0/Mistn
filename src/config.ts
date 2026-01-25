@@ -277,27 +277,32 @@ export const navBarConfig: NavBarConfig = {
 			icon: "material-symbols:group",
 		},
 		{
-			name: "Others",
-			url: "#",
-			icon: "material-symbols:more-horiz",
-			children: [
-				{
-					name: "Projects",
-					url: "/projects/",
-					icon: "material-symbols:work",
-				},
-				{
-					name: "Skills",
-					url: "/skills/",
-					icon: "material-symbols:psychology",
-				},
-				{
-					name: "Timeline",
-					url: "/timeline/",
-					icon: "material-symbols:timeline",
-				},
-			],
+			name: "Timeline",
+			url: "/timeline/",
+			icon: "material-symbols:timeline",
 		},
+		// {
+		// 	name: "Others",
+		// 	url: "#",
+		// 	icon: "material-symbols:more-horiz",
+		// 	children: [
+		// 		{
+		// 			name: "Projects",
+		// 			url: "/projects/",
+		// 			icon: "material-symbols:work",
+		// 		},
+		// 		{
+		// 			name: "Skills",
+		// 			url: "/skills/",
+		// 			icon: "material-symbols:psychology",
+		// 		},
+		// 		{
+		// 			name: "Timeline",
+		// 			url: "/timeline/",
+		// 			icon: "material-symbols:timeline",
+		// 		},
+		// 	],
+		// },
 	],
 };
 
@@ -382,7 +387,7 @@ export const shareConfig: ShareConfig = {
 
 export const announcementConfig: AnnouncementConfig = {
 	title: "", // 公告标题，填空使用i18n字符串Key.announcement
-	content: "ACG/巨蟹/ENFJ/物哀/花间词派", // 公告内容
+	content: "ACG/巨蟹/ENFJ/物哀/花间词风", // 公告内容
 	closable: false, // 允许用户关闭公告
 };
 
