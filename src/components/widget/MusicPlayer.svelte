@@ -156,7 +156,7 @@ const localPlaylist = [
 	{
 		id: 11,
 		title: "願い",
-		artist: "Bruno Wen-li",
+		artist: "市川淳",
 		cover: "/Mistn/assets/music/cover/sora.jpg",
 		url: "/Mistn/assets/music/url/願い.mp3",
 		duration: 102,
@@ -172,7 +172,7 @@ const localPlaylist = [
     {
 		id: 13,
 		title: "Before its too late",
-		artist: "Bruno Wen-li",
+		artist: "市川淳",
 		cover: "/Mistn/assets/music/cover/sora.jpg",
 		url: "/Mistn/assets/music/url/Before its too late.mp3",
 		duration: 102,
@@ -180,7 +180,7 @@ const localPlaylist = [
     {
 		id: 14,
 		title: "Old Memory",
-		artist: "Bruno Wen-li",
+		artist: "市川淳",
 		cover: "/Mistn/assets/music/cover/sora.jpg",
 		url: "/Mistn/assets/music/url/Old Memory.mp3",
 		duration: 115,
