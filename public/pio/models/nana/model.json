@@ -10,39 +10,55 @@
 		],
 		"Physics": "nana.physics3.json",
 		"DisplayInfo": "nana.cdi3.json",
-		"Expressions": [
-			{ "Name": "LoveEye", "File": "爱心眼.exp3.json" },
-			{ "Name": "DarkFace", "File": "黑脸.exp3.json" },
-			{ "Name": "Confused", "File": "困惑符号.exp3.json" },
-			{ "Name": "Tear", "File": "泪眼.exp3.json" },
-			{ "Name": "Knife", "File": "默认手拿刀.exp3.json" },
-			{ "Name": "Hand", "File": "伸手.exp3.json" },
-			{ "Name": "Angry", "File": "生气符号.exp3.json" },
-			{ "Name": "Blood2", "File": "血迹二段.exp3.json" },
-			{ "Name": "Blood1", "File": "血迹一段.exp3.json" },
-			{ "Name": "EyePatch", "File": "眼罩.exp3.json" },
-			{ "Name": "Dizzy", "File": "晕晕眼.exp3.json" }
-		],
 		"Motions": {
 			"Idle": [
-				{ "File": "idel.motion3.json", "FadeIn": 2000, "FadeOut": 2000 }
+				{
+					"File": "idel.motion3.json",
+					"FadeIn": 2000,
+					"FadeOut": 2000
+				}
 			],
-            "//注释": "这里是身体互动的动作",
 			"TapBody": [
-				{ "File": "idel 丢追.motion3.json", "FadeIn": 500, "FadeOut": 500 }
+				{
+					"File": "idel 丢追.motion3.json",
+					"FadeIn": 500,
+					"FadeOut": 500
+				}
 			],
-            "//注释": "✅ 新增：这里是头部互动的动作 (复用待机动作，防止点击没反应)",
-            "TapHead": [
-				{ "File": "idel.motion3.json", "FadeIn": 500, "FadeOut": 500 }
+			"TapHead": [
+				{
+					"File": "idel.motion3.json",
+					"FadeIn": 500,
+					"FadeOut": 500
+				}
 			]
 		}
 	},
 	"HitAreas": [
-		{ "Id": "HitAreaHead", "Name": "Head" },
-		{ "Id": "HitAreaBody", "Name": "Body" }
+		{
+			"Id": "HitAreaHead",
+			"Name": "Head"
+		},
+		{
+			"Id": "HitAreaBody",
+			"Name": "Body"
+		}
 	],
 	"Groups": [
-		{ "Target": "Parameter", "Name": "LipSync", "Ids": ["ParamMouthOpenY"] },
-		{ "Target": "Parameter", "Name": "EyeBlink", "Ids": ["ParamEyeLOpen", "ParamEyeROpen"] }
+		{
+			"Target": "Parameter",
+			"Name": "LipSync",
+			"Ids": [
+				"ParamMouthOpenY"
+			]
+		},
+		{
+			"Target": "Parameter",
+			"Name": "EyeBlink",
+			"Ids": [
+				"ParamEyeLOpen",
+				"ParamEyeROpen"
+			]
+		}
 	]
 }
