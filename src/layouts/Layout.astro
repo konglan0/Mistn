@@ -367,9 +367,11 @@ if (siteConfig.font) {
 		<!-- Pio 看板娘样式 - 仅在启用时加载 -->
 		{
 			pioConfig.enable && (
-				<link rel="stylesheet" href="/pio/static/pio.css" />
+				// 使用 url() 函数包裹路径，它会自动处理 /Mistn 前缀
+				<link rel="stylesheet" href={url("/pio/static/pio.css")} />
 			)
 		}
+
 
 		<link
 			rel="alternate"

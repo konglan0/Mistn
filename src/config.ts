@@ -591,28 +591,37 @@ export const sakuraConfig: SakuraConfig = {
 };
 
 // Pio 看板娘配置
+// Pio 看板娘配置
 export const pioConfig: import("./types/config").PioConfig = {
-	enable: true, // 启用看板娘
-	models: ["/pio/models/pio/model.json"], // 默认模型路径
-	position: "left", // 模型位置
-	width: 280, // 默认宽度
-	height: 250, // 默认高度
-	mode: "draggable", // 默认为可拖拽模式
-	hiddenOnMobile: true, // 默认在移动设备上隐藏
-	dialog: {
-		welcome: "Welcome to Mizuki Website!", // 欢迎词
-		touch: [
-			"What are you doing?",
-			"Stop touching me!",
-			"HENTAI!",
-			"Don't bully me like that!",
-		], // 触摸提示
-		home: "Click here to go back to homepage!", // 首页提示
-		skin: ["Want to see my new outfit?", "The new outfit looks great~"], // 换装提示
-		close: "QWQ See you next time~", // 关闭提示
-		link: "https://github.com/matsuzaka-yuki/Mizuki", // 关于链接
-	},
+    // 1. 基础开关
+    enable: true, // 开启看板娘
+    hiddenOnMobile: true, // 手机端是否隐藏
+
+    // 2. 位置设置
+    position: "left", // 模型显示在左侧还是右侧 (left / right)
+
+    // 3. 模型路径配置
+    // 注意：这里的 models 数组虽然保留，但实际上主要的加载逻辑
+    // 已经被我在 Pio.svelte 里写死了指向 "pio/models/nana/nana.model3.json"
+    // 所以这里其实写不写都行，但为了防止报错，我们保留一个占位符
+    models: [
+        "pio/models/nana/model.json"
+    ], 
+
+    // --- 下面的配置在新的 CDN 方案中已经失效，但保留着防止报错 ---
+    width: 350, 
+    height: 400,
+    mode: "draggable",
+    dialog: {
+        welcome: "ignored", 
+        touch: ["ignored"],
+        home: "ignored",
+        skin: ["ignored", "ignored"], 
+        close: "ignored",
+        link: "ignored",
+    },
 };
+
 
 // 导出所有配置的统一接口
 export const widgetConfigs = {
