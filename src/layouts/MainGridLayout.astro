@@ -111,11 +111,33 @@ const {
 const hasBannerCredit = siteConfig.banner.credit.enable;
 const hasBannerLink = !!siteConfig.banner.credit.url;
 
-// 检查是否为首页
-const isHomePage = Astro.url.pathname === "/" || Astro.url.pathname === "";
+// =========================================================
+// ⚡️ 核心修复：兼容子路径 (/Mistn) 的首页判断逻辑 ⚡️
+// =========================================================
+
+// 1. 获取当前路径和基础路径
+const currentPath = Astro.url.pathname;
+const base = import.meta.env.BASE_URL; // Astro 会自动读取你的 base 配置 ("/Mistn/")
+
+// 2. 标准化路径函数：移除末尾的斜杠，避免 "/Mistn" 和 "/Mistn/" 不匹配的问题
+const normalizePath = (path: string) => path.replace(/\/$/, "") || "/";
+
+// 3. 比较当前路径是否等于基础路径
+const isHomePage = 
+    normalizePath(currentPath) === normalizePath(base) || 
+    currentPath === "/" || 
+    currentPath === "";
+
+// =========================================================
+
 const showHomeText = siteConfig.banner.homeText?.enable && isHomePage;
+
 // 手机端非首页不显示banner的CSS类
+// 修复了 isHomePage 后，这里的逻辑也会自动变正确：
+// 首页 -> isHomePage 为 true -> mobileNonHomeBannerClass 为空 -> 显示 Banner
+// 非首页 -> isHomePage 为 false -> mobileNonHomeBannerClass 为 "mobile-hide-banner" -> 隐藏 Banner
 const mobileNonHomeBannerClass = !isHomePage ? "mobile-hide-banner" : "";
+
 
 // 计算主内容区域位置，考虑手机端非首页时banner被隐藏
 // 当默认模式为 banner 时，使用banner高度；否则使用顶栏高度
