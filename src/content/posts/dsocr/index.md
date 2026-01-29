@@ -580,4 +580,349 @@ def main():
 if __name__ == "__main__":
     main()
 ```
+# 本地快捷应用封装
+## 界面
+安装图形界面库：
+```dsocr2
+pip install PyQt5
+```
+在`DeepSeek-OCR2-master`下新建一个文件 `app_gui.py`，将以下代码全部复制进去，包含了以下功能：
+- 文件列表：支持拖拽或按钮添加图片/PDF，混合排列。
+- 灵活合并：可以选择“合并所有”或“单独保存”。
+- 实时日志：界面下方有日志窗口，显示转换进度。
+- 配置项：可以手动修改模型路径、文件保存路径。
+```python
+import sys
+import os
+import io
+import time
+import contextlib
+import threading
+from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, 
+                             QPushButton, QListWidget, QFileDialog, QLabel, QCheckBox, 
+                             QTextEdit, QProgressBar, QLineEdit, QGroupBox, QSplitter, QMessageBox)
+from PyQt5.QtCore import Qt, QThread, pyqtSignal
+from PyQt5.QtGui import QIcon, QFont
+
+# 引入核心处理逻辑需要的库
+import fitz  # PyMuPDF
+from PIL import Image
+import torch
+from transformers import AutoModel, AutoTokenizer
+
+# ================= 后端处理线程 =================
+
+class OCRWorker(QThread):
+    log_signal = pyqtSignal(str)       # 发送日志信号
+    progress_signal = pyqtSignal(int)  # 发送进度信号
+    finish_signal = pyqtSignal()       # 完成信号
+
+    def __init__(self, file_list, model_path, output_dir, merge_mode, output_filename):
+        super().__init__()
+        self.file_list = file_list
+        self.model_path = model_path
+        self.output_dir = output_dir
+        self.merge_mode = merge_mode # True: 合并, False: 不合并
+        self.output_filename = output_filename
+        self.model = None
+        self.tokenizer = None
+        self.stop_flag = False
+
+    def clean_ocr_output(self, text):
+        lines = text.split('\n')
+        clean_lines = []
+        junk_keywords = [
+            "The attention mask", "Setting `pad_token_id`", "BASE:  torch.Size", 
+            "PATCHES:  torch.Size", "UserWarning:", "configuration_utils.py", 
+            "modeling_deepseekocr2.py", "warnings.warn", "Loading checkpoint", 
+            "input_ids", "attention_mask", "position_ids", "get_max_cache"
+        ]
+        for line in lines:
+            if not any(kw in line for kw in junk_keywords):
+                clean_lines.append(line)
+        return '\n'.join(clean_lines).strip()
+
+    def load_model(self):
+        self.log_signal.emit("🤖 正在加载模型 (DeepSeek-OCR2)... 这可能需要几分钟...")
+        try:
+            self.tokenizer = AutoTokenizer.from_pretrained(self.model_path, trust_remote_code=True)
+            try:
+                self.model = AutoModel.from_pretrained(self.model_path, trust_remote_code=True, _attn_implementation='flash_attention_2')
+                self.log_signal.emit("✅ 模型加载成功 (Flash Attention 加速开启)")
+            except:
+                self.model = AutoModel.from_pretrained(self.model_path, trust_remote_code=True)
+                self.log_signal.emit("⚠️ 模型加载成功 (Flash Attention 未安装，使用普通模式)")
+            
+            self.model = self.model.eval().cuda().to(torch.bfloat16)
+            return True
+        except Exception as e:
+            self.log_signal.emit(f"❌ 模型加载失败: {str(e)}")
+            return False
+
+    def run(self):
+        if not self.load_model():
+            return
+
+        total_files = len(self.file_list)
+        all_md_content = f"# OCR Result\n\nDate: {time.strftime('%Y-%m-%d %H:%M:%S')}\n\n"
+        
+        prompt = "<image>\nFree OCR."
+        
+        for idx, file_path in enumerate(self.file_list):
+            if self.stop_flag: break
+            
+            file_name = os.path.basename(file_path)
+            self.log_signal.emit(f"\n📄 [{idx+1}/{total_files}] 正在处理: {file_name}")
+            
+            # 识别逻辑
+            file_content = ""
+            images = []
+
+            try:
+                # 1. 判断类型并转图片
+                if file_path.lower().endswith('.pdf'):
+                    pdf_doc = fitz.open(file_path)
+                    for p_num in range(pdf_doc.page_count):
+                        pix = pdf_doc[p_num].get_pixmap(matrix=fitz.Matrix(2, 2))
+                        img = Image.open(io.BytesIO(pix.tobytes("png"))).convert("RGB")
+                        images.append(img)
+                    pdf_doc.close()
+                else:
+                    # 图片
+                    img = Image.open(file_path).convert("RGB")
+                    images.append(img)
+                
+                # 2. 逐图推理
+                file_content += f"# File: {file_name}\n\n"
+                
+                for i, img in enumerate(images):
+                    self.log_signal.emit(f"   -> 处理页/图 {i+1}/{len(images)}...")
+                    
+                    temp_path = f"temp_gui_{i}.png"
+                    img.save(temp_path)
+                    
+                    captured_output = io.StringIO()
+                    with contextlib.redirect_stdout(captured_output):
+                         with contextlib.redirect_stderr(captured_output):
+                            self.model.infer(self.tokenizer, prompt=prompt, image_file=temp_path, 
+                                            output_path="./dummy", base_size=1024, image_size=768, 
+                                            crop_mode=True, save_results=False)
+                    
+                    raw_text = captured_output.getvalue()
+                    clean_text = self.clean_ocr_output(raw_text)
+                    
+                    if clean_text:
+                        file_content += f"\n\n<!-- Page/Part {i+1} -->\n\n{clean_text}"
+                    
+                    if os.path.exists(temp_path): os.remove(temp_path)
+
+                # 3. 处理结果
+                if self.merge_mode:
+                    all_md_content += f"\n\n---\n\n{file_content}"
+                else:
+                    # 单独保存
+                    single_out_path = os.path.join(self.output_dir, os.path.splitext(file_name)[0] + ".md")
+                    with open(single_out_path, "w", encoding="utf-8") as f:
+                        f.write(file_content)
+                    self.log_signal.emit(f"   ✅ 已保存至: {single_out_path}")
+
+            except Exception as e:
+                self.log_signal.emit(f"❌ 处理出错: {str(e)}")
+
+            # 更新进度条
+            progress = int((idx + 1) / total_files * 100)
+            self.progress_signal.emit(progress)
+
+        # 如果是合并模式，最后保存大文件
+        if self.merge_mode and not self.stop_flag:
+            merge_path = os.path.join(self.output_dir, self.output_filename)
+            with open(merge_path, "w", encoding="utf-8") as f:
+                f.write(all_md_content)
+            self.log_signal.emit(f"\n🎉 合并文件已保存至: {merge_path}")
+        
+        self.finish_signal.emit()
+
+# ================= 前端界面逻辑 =================
+
+class OCRApp(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("DeepSeek-OCR2 桌面助手")
+        self.resize(900, 700)
+        self.initUI()
+        self.worker = None
+
+    def initUI(self):
+        main_widget = QWidget()
+        self.setCentralWidget(main_widget)
+        layout = QVBoxLayout(main_widget)
+
+        # 1. 顶部配置区
+        config_group = QGroupBox("配置与路径")
+        config_layout = QVBoxLayout()
+        
+        # 模型路径
+        h_layout_model = QHBoxLayout()
+        h_layout_model.addWidget(QLabel("模型路径:"))
+        self.model_path_edit = QLineEdit(r"D:\ModelScope_Cache\models\deepseek-ai\DeepSeek-OCR-2")#替换为你自己的模型路径
+        h_layout_model.addWidget(self.model_path_edit)
+        config_layout.addLayout(h_layout_model)
+
+        # 输出路径
+        h_layout_out = QHBoxLayout()
+        h_layout_out.addWidget(QLabel("输出目录:"))
+        self.out_path_edit = QLineEdit(os.getcwd()) # 默认当前目录，也可以选择目录
+        btn_sel_out = QPushButton("选择")
+        btn_sel_out.clicked.connect(self.select_output_dir)
+        h_layout_out.addWidget(self.out_path_edit)
+        h_layout_out.addWidget(btn_sel_out)
+        config_layout.addLayout(h_layout_out)
+        
+        config_group.setLayout(config_layout)
+        layout.addWidget(config_group)
+
+        # 2. 中间文件列表区
+        self.file_list_widget = QListWidget()
+        self.file_list_widget.setAcceptDrops(True)
+        self.file_list_widget.setDragDropMode(QListWidget.InternalMove) # 允许拖拽排序
+        
+        # 启用文件拖入
+        self.file_list_widget.dragEnterEvent = self.dragEnterEvent
+        self.file_list_widget.dragMoveEvent = self.dragMoveEvent
+        self.file_list_widget.dropEvent = self.dropEvent
+        
+        btn_layout = QHBoxLayout()
+        btn_add_files = QPushButton("添加文件 (PDF/图片)")
+        btn_add_files.clicked.connect(self.add_files)
+        btn_clear = QPushButton("清空列表")
+        btn_clear.clicked.connect(self.file_list_widget.clear)
+        btn_layout.addWidget(btn_add_files)
+        btn_layout.addWidget(btn_clear)
+
+        layout.addWidget(QLabel("待处理文件 (支持拖拽排序/添加):"))
+        layout.addWidget(self.file_list_widget)
+        layout.addLayout(btn_layout)
+
+        # 3. 底部操作区
+        op_group = QGroupBox("操作选项")
+        op_layout = QHBoxLayout()
+        
+        self.chk_merge = QCheckBox("将结果合并为一个文件")
+        self.merge_name_edit = QLineEdit("merged_result.md")
+        self.merge_name_edit.setPlaceholderText("合并文件名")
+        self.merge_name_edit.setEnabled(False)
+        self.chk_merge.toggled.connect(lambda: self.merge_name_edit.setEnabled(self.chk_merge.isChecked()))
+
+        self.btn_start = QPushButton("开始转换")
+        self.btn_start.setFixedHeight(40)
+        self.btn_start.setStyleSheet("background-color: #4CAF50; color: white; font-weight: bold;")
+        self.btn_start.clicked.connect(self.start_ocr)
+
+        op_layout.addWidget(self.chk_merge)
+        op_layout.addWidget(self.merge_name_edit)
+        op_layout.addStretch()
+        op_layout.addWidget(self.btn_start)
+        op_group.setLayout(op_layout)
+        layout.addWidget(op_group)
+
+        # 4. 进度与日志
+        self.progress_bar = QProgressBar()
+        self.log_text = QTextEdit()
+        self.log_text.setReadOnly(True)
+        
+        layout.addWidget(self.progress_bar)
+        layout.addWidget(QLabel("运行日志:"))
+        layout.addWidget(self.log_text)
+
+    # --- 事件处理 ---
+    def select_output_dir(self):
+        dir_path = QFileDialog.getExistingDirectory(self, "选择输出目录")
+        if dir_path:
+            self.out_path_edit.setText(dir_path)
+
+    def add_files(self):
+        files, _ = QFileDialog.getOpenFileNames(self, "选择文件", "", "Files (*.pdf *.jpg *.jpeg *.png *.bmp)")
+        if files:
+            self.file_list_widget.addItems(files)
+
+    def dragEnterEvent(self, event):
+        if event.mimeData().hasUrls():
+            event.accept()
+        else:
+            event.ignore()
+
+    def dragMoveEvent(self, event):
+        if event.mimeData().hasUrls():
+            event.setDropAction(Qt.CopyAction)
+            event.accept()
+        else:
+            event.ignore()
+
+    def dropEvent(self, event):
+        if event.mimeData().hasUrls():
+            event.setDropAction(Qt.CopyAction)
+            event.accept()
+            links = []
+            for url in event.mimeData().urls():
+                links.append(str(url.toLocalFile()))
+            self.file_list_widget.addItems(links)
+        else:
+            event.ignore()
+
+    def log(self, text):
+        self.log_text.append(text)
+        self.log_text.verticalScrollBar().setValue(self.log_text.verticalScrollBar().maximum())
+
+    def start_ocr(self):
+        # 收集文件
+        files = [self.file_list_widget.item(i).text() for i in range(self.file_list_widget.count())]
+        if not files:
+            QMessageBox.warning(self, "提示", "请先添加文件！")
+            return
+
+        model_path = self.model_path_edit.text()
+        output_dir = self.out_path_edit.text()
+        merge_mode = self.chk_merge.isChecked()
+        merge_name = self.merge_name_edit.text()
+
+        # 锁定界面
+        self.btn_start.setEnabled(False)
+        self.file_list_widget.setEnabled(False)
+        self.progress_bar.setValue(0)
+        self.log_text.clear()
+
+        # 启动线程
+        self.worker = OCRWorker(files, model_path, output_dir, merge_mode, merge_name)
+        self.worker.log_signal.connect(self.log)
+        self.worker.progress_signal.connect(self.progress_bar.setValue)
+        self.worker.finish_signal.connect(self.on_finish)
+        self.worker.start()
+
+    def on_finish(self):
+        self.btn_start.setEnabled(True)
+        self.file_list_widget.setEnabled(True)
+        QMessageBox.information(self, "完成", "所有任务已处理完毕！")
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = OCRApp()
+    window.show()
+    sys.exit(app.exec_())
+```
+## 快捷运行
+在 `app_gui.py` 同级目录下，新建一个文本文档，重命名为 `start_ocr.bat`，输入以下内容：
+```BATCH
+@echo off
+chcp 65001
+"C:\Users\...\anaconda3\envs\dsocr2\python.exe" "D:\..\deepseek-ocr2\DeepSeek-OCR-2\DeepSeek-OCR2-master\app_gui.py"
+pause
+```
+请将上述`C:\Users\...\anaconda3\envs\dsocr2\python.exe`替换为自己电脑的用户路径，`D:\..\deepseek-ocr2\DeepSeek-OCR-2\app_gui.py`替换为自己的`app_gui.py`路径。注意，`chcp 65001`是为了解决路径中存在中文字符而使用的。
+
+双击这个 `start_ocr.bat`，看看能不能自动弹出软件界面。如果能，继续下一步。
+
+右键点击 `start_ocr.bat` -> 发送到 -> 桌面快捷方式。
+
+回到桌面，右键点击刚才生成的快捷方式 -> 属性。点击 “更改图标”，选一个好看的图标。在 “运行方式” 里选择 “最小化”（这样启动时那个黑色的 CMD 窗口就会闪一下消失，不会一直挡着）。
+
 
