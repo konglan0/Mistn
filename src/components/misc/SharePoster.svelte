@@ -145,29 +145,69 @@ async function generatePoster() {
 		const ctx = canvas.getContext("2d");
 		if (!ctx) throw new Error("Canvas context not available");
 
-		// Calculate layout
+		// --- [开始] 自适应布局计算 ---
+		
+		// 1. 基础尺寸定义
 		const coverHeight = (coverImage ? 200 : 120) * SCALE;
 		const titleFontSize = 24 * SCALE;
+		const titleLineHeight = 30 * SCALE;
 		const descFontSize = 14 * SCALE;
-		const footerHeight = 60 * SCALE;
+		const descLineHeight = 25 * SCALE;
+		
+		// 底部二维码尺寸 (此处定义后，绘图逻辑也能复用)
+		const qrSize = 80 * SCALE; 
+		const qrShadowSize = 4 * SCALE; // 预留阴影空间
 
+		// 2. 计算标题高度
 		ctx.font = `700 ${titleFontSize}px ${FONT_FAMILY}`;
 		const titleLines = getLines(ctx, title, CONTENT_WIDTH);
-		const titleLineHeight = 30 * SCALE;
 		const titleHeight = titleLines.length * titleLineHeight;
 
-		let descHeight = 0;
+		// 3. 计算描述高度
+		let descBlockHeight = 0; // 描述块的总高度
+		let descGap = 0;         // 标题和描述之间的间距
+		
 		if (description) {
 			ctx.font = `${descFontSize}px ${FONT_FAMILY}`;
 			const descLines = getLines(ctx, description, CONTENT_WIDTH - 16 * SCALE);
-			descHeight = Math.min(descLines.length, 6) * (25 * SCALE);
+			// 限制描述最多显示 6 行
+			const lineCount = Math.min(descLines.length, 6);
+			// 描述高度 = 行高总和
+			const textHeight = lineCount * descLineHeight; 
+			// 描述块总高 = 文字高度 + 上下内边距(8px)
+			// 注意：原代码绘制圆角矩形时，高度是 textHeight + 8 * SCALE
+			descBlockHeight = textHeight + (8 * SCALE); 
+			descGap = 24 * SCALE; // 有描述时，标题下方的间距
+		} else {
+			descGap = 8 * SCALE;  // 无描述时，标题下方的间距
 		}
 
-		const canvasHeight = coverHeight + PADDING + titleHeight + 16 * SCALE + descHeight +
-			(description ? 24 * SCALE : 8 * SCALE) + 24 * SCALE + footerHeight + PADDING;
+		// 4. 计算 Footer 自适应高度
+		// Footer 包含：分割线间距 + 实际内容
+		const separatorTopGap = 24 * SCALE; // 分割线上方间距
+		const separatorBottomGap = 16 * SCALE; // 分割线下方间距
+		const separatorHeight = separatorTopGap + separatorBottomGap;
+
+		// Footer 内容高度：取 (左侧文字高度) 和 (右侧二维码+阴影高度) 的最大值
+		const footerLeftTextHeight = 60 * SCALE; // 作者名 + 站点名的大致高度
+		const footerRightQrHeight = qrSize + qrShadowSize; 
+		const realFooterContentHeight = Math.max(footerLeftTextHeight, footerRightQrHeight);
+
+		// 5. 累加总高度
+		// 结构：封面 + PADDING + 标题 + 间距 + (描述) + 分割线区域 + Footer内容 + 底部PADDING
+		const canvasHeight = coverHeight + 
+							PADDING + 
+							titleHeight + 
+							(16 * SCALE) + // 标题本身行高修正(原代码逻辑)
+							descGap + 
+							descBlockHeight + 
+							separatorHeight + 
+							realFooterContentHeight + 
+							PADDING;
 
 		canvas.width = WIDTH;
 		canvas.height = canvasHeight;
+		// --- [结束] 自适应布局计算 ---
 
 		// Background
 		ctx.fillStyle = "#ffffff";
@@ -281,7 +321,6 @@ async function generatePoster() {
 
 		// Footer
 		const footerY = drawY;
-		const qrSize = 80 * SCALE;
 		const qrX = WIDTH - PADDING - qrSize;
 
 		// QR code background
